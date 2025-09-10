@@ -12,10 +12,11 @@ def call(String mavenVersion = "3.9.6") {
 
         echo ">>> Downloading Apache Maven \$MAVEN_VERSION..."
         wget -q --show-progress --progress=bar:force:noscroll \$MAVEN_URL -O /tmp/\$MAVEN_TAR
+        ls -lh /tmp/\$MAVEN_TAR
 
         echo ">>> Extracting Maven..."
         sudo mkdir -p /opt
-        sudo tar -xzf /tmp/\$MAVEN_TAR -C /opt/
+        sudo tar -xvzf /tmp/\$MAVEN_TAR -C /opt/ || { echo "Tar failed"; exit 8; }
         sudo ln -sfn /opt/apache-maven-\$MAVEN_VERSION \$MAVEN_HOME
 
         echo ">>> Configuring environment variables..."
