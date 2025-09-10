@@ -11,21 +11,20 @@ def call(String mavenVersion = "3.9.6") {
         sudo apt-get install -y wget tar
 
         echo ">>> Downloading Apache Maven \$MAVEN_VERSION..."
-        wget -q \$MAVEN_URL -O /tmp/\$MAVEN_TAR
+        wget -q --show-progress --progress=bar:force:noscroll \$MAVEN_URL -O /tmp/\$MAVEN_TAR
 
         echo ">>> Extracting Maven..."
-        sudo mkdir -p \$MAVEN_HOME
+        sudo mkdir -p /opt
         sudo tar -xzf /tmp/\$MAVEN_TAR -C /opt/
         sudo ln -sfn /opt/apache-maven-\$MAVEN_VERSION \$MAVEN_HOME
 
         echo ">>> Configuring environment variables..."
-        if ! grep -q "M2_HOME" /etc/profile.d/maven.sh 2>/dev/null; then
-            echo "export M2_HOME=\$MAVEN_HOME" | sudo tee /etc/profile.d/maven.sh
-            echo "export PATH=\\\$M2_HOME/bin:\\\$PATH" | sudo tee -a /etc/profile.d/maven.sh
-        fi
-        source /etc/profile.d/maven.sh
+        sudo bash -c 'cat > /etc/profile.d/maven.sh << EOF
+export M2_HOME=\$MAVEN_HOME
+export PATH=\$M2_HOME/bin:\$PATH
+EOF'
 
         echo ">>> Verifying Maven installation..."
-        \$MAVEN_HOME/bin/mvn -version
+        /opt/maven/bin/mvn -version
     """
 }
